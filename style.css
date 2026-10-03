@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal IA v0.3</title>
+    <!-- On lie le fichier de style externe -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h2>TERMINAL_IA // v0.3</h2>
+    <div id="chat-container">
+        <div class="msg bot">> Système initialisé. En attente de commande...</div>
+    </div>
+
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Tape ton message..." autofocus>
+        <button onclick="envoyer()">Envoyer</button>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("user-input");
+        inputField.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                envoyer();
+            }
+        });
+
+        async function envoyer() {
+            const texte = inputField.value.trim();
+            if (!texte) return;
+
+            const chatContainer = document.getElementById("chat-container");
+            
+            chatContainer.innerHTML += `<div class="msg user">> Toi : ${texte}</div>`;
+            inputField.value = "";
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const loadingId = "load-" + Date.now();
+            chatContainer.innerHTML += `<div class="msg bot" id="${loadingId}">> Connexion au serveur neuronal...</div>`;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const reponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texte)}`);
+                const data = await reponse.text();
+
+                document.getElementById(loadingId).innerText = `> IA : ${data}`;
+            } catch (error) {
+                document.getElementById(loadingId).innerText = `> Erreur : Le réseau a lâché.`;
+            }
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
