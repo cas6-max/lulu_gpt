@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal IA v0.1</title>
+    <style>
+        body {
+            /* Changement : Fond bleu clair */
+            background-color: #d0e1fd;
+            /* Changement : Écriture noire */
+            color: #000000;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            /* Bordure bleue plus foncée pour bien délimiter */
+            border: 2px solid #4a90e2;
+            padding: 15px;
+            margin-bottom: 10px;
+            /* Fond blanc/bleu très clair pour la zone de chat */
+            background-color: #f0f6ff;
+        }
+        .msg {
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .user { color: #1a365d; font-weight: bold; }
+        .bot { color: #000000; }
+        #input-container {
+            display: flex;
+        }
+        input {
+            flex: 1;
+            background: #ffffff;
+            border: 2px solid #4a90e2;
+            color: #000000;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+        }
+        button {
+            background: #4a90e2;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        button:hover {
+            background: #357abd;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>TERMINAL_IA // [PROTOTYPE]</h2>
+    <div id="chat-container">
+        <div class="msg bot">> Système initialisé. En attente de commande...</div>
+    </div>
+
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Tape ton message..." autofocus>
+        <button onclick="envoyer()">Envoyer</button>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("user-input");
+        inputField.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                envoyer();
+            }
+        });
+
+        async function envoyer() {
+            const texte = inputField.value.trim();
+            if (!texte) return;
+
+            const chatContainer = document.getElementById("chat-container");
+            
+            // Afficher le message de l'utilisateur
+            chatContainer.innerHTML += `<div class="msg user">> Toi : ${texte}</div>`;
+            inputField.value = "";
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Message d'attente
+            const loadingId = "load-" + Date.now();
+            chatContainer.innerHTML += `<div class="msg bot" id="${loadingId}">> Connexion au serveur neuronal...</div>`;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                // Appel à l'API publique et gratuite
+                const reponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texte)}`);
+                const data = await reponse.text();
+
+                // Remplacer le message d'attente par la réponse
+                document.getElementById(loadingId).innerText = `> IA : ${data}`;
+            } catch (error) {
+                document.getElementById(loadingId).innerText = `> Erreur : Le réseau a lâché.`;
+            }
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
