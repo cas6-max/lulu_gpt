@@ -3,65 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal IA v0.1</title>
+    <title>Terminal IA v0.2</title>
+    <!-- Importation d'une vraie police de terminal moderne depuis Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Changement : Fond bleu clair */
             background-color: #d0e1fd;
-            /* Changement : Écriture noire */
             color: #000000;
-            font-family: 'Courier New', Courier, monospace;
+            /* Utilisation de la nouvelle police avec une police de secours */
+            font-family: 'Share Tech Mono', monospace;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             height: 90vh;
         }
+
+        h2 {
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin-top: 0;
+            color: #1a365d;
+        }
+
         #chat-container {
             flex: 1;
             overflow-y: auto;
-            /* Bordure bleue plus foncée pour bien délimiter */
             border: 2px solid #4a90e2;
-            padding: 15px;
-            margin-bottom: 10px;
-            /* Fond blanc/bleu très clair pour la zone de chat */
+            padding: 20px;
+            margin-bottom: 15px;
             background-color: #f0f6ff;
+            /* Coins arrondis pour un look plus moderne */
+            border-radius: 12px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
+
         .msg {
-            margin-bottom: 10px;
-            line-height: 1.4;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 1.1rem;
+            /* Petite animation fluide à l'apparition des messages */
+            animation: fadeIn 0.3s ease-in-out;
         }
-        .user { color: #1a365d; font-weight: bold; }
-        .bot { color: #000000; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user { 
+            color: #1a365d; 
+            font-weight: bold; 
+        }
+
+        .bot { 
+            color: #000000; 
+        }
+
         #input-container {
             display: flex;
+            gap: 10px;
         }
+
         input {
             flex: 1;
             background: #ffffff;
             border: 2px solid #4a90e2;
             color: #000000;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
+            padding: 12px 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
         }
+
+        input:focus {
+            border-color: #1a365d;
+        }
+
         button {
             background: #4a90e2;
             color: #ffffff;
             border: none;
-            padding: 10px 20px;
+            padding: 0 25px;
             font-weight: bold;
             cursor: pointer;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.1s;
         }
+
         button:hover {
             background: #357abd;
+        }
+
+        button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
 
-    <h2>TERMINAL_IA // [PROTOTYPE]</h2>
+    <h2>TERMINAL_IA // v0.2</h2>
     <div id="chat-container">
         <div class="msg bot">> Système initialisé. En attente de commande...</div>
     </div>
@@ -85,22 +130,18 @@
 
             const chatContainer = document.getElementById("chat-container");
             
-            // Afficher le message de l'utilisateur
             chatContainer.innerHTML += `<div class="msg user">> Toi : ${texte}</div>`;
             inputField.value = "";
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Message d'attente
             const loadingId = "load-" + Date.now();
             chatContainer.innerHTML += `<div class="msg bot" id="${loadingId}">> Connexion au serveur neuronal...</div>`;
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                // Appel à l'API publique et gratuite
                 const reponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texte)}`);
                 const data = await reponse.text();
 
-                // Remplacer le message d'attente par la réponse
                 document.getElementById(loadingId).innerText = `> IA : ${data}`;
             } catch (error) {
                 document.getElementById(loadingId).innerText = `> Erreur : Le réseau a lâché.`;
