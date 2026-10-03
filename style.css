@@ -1,58 +1,92 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal IA v0.3</title>
-    <!-- On lie le fichier de style externe -->
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-</head>
-<body>
+body {
+    background-color: #d0e1fd;
+    color: #000000;
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+}
 
-    <h2>TERMINAL_IA // v0.3</h2>
-    <div id="chat-container">
-        <div class="msg bot">> Système initialisé. En attente de commande...</div>
-    </div>
+h2 {
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    margin-top: 0;
+    color: #1a365d;
+}
 
-    <div id="input-container">
-        <input type="text" id="user-input" placeholder="Tape ton message..." autofocus>
-        <button onclick="envoyer()">Envoyer</button>
-    </div>
+#chat-container {
+    flex: 1;
+    overflow-y: auto;
+    border: 2px solid #4a90e2;
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #f0f6ff;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
 
-    <script>
-        const inputField = document.getElementById("user-input");
-        inputField.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                envoyer();
-            }
-        });
+.msg {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    font-size: 1.1rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
 
-        async function envoyer() {
-            const texte = inputField.value.trim();
-            if (!texte) return;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-            const chatContainer = document.getElementById("chat-container");
-            
-            chatContainer.innerHTML += `<div class="msg user">> Toi : ${texte}</div>`;
-            inputField.value = "";
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+.user { 
+    color: #1a365d; 
+    font-weight: bold; 
+}
 
-            const loadingId = "load-" + Date.now();
-            chatContainer.innerHTML += `<div class="msg bot" id="${loadingId}">> Connexion au serveur neuronal...</div>`;
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+.bot { 
+    color: #000000; 
+}
 
-            try {
-                const reponse = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texte)}`);
-                const data = await reponse.text();
+#input-container {
+    display: flex;
+    gap: 10px;
+}
 
-                document.getElementById(loadingId).innerText = `> IA : ${data}`;
-            } catch (error) {
-                document.getElementById(loadingId).innerText = `> Erreur : Le réseau a lâché.`;
-            }
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-    </script>
+input {
+    flex: 1;
+    background: #ffffff;
+    border: 2px solid #4a90e2;
+    color: #000000;
+    padding: 12px 15px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
 
-</body>
-</html>
+input:focus {
+    border-color: #1a365d;
+}
+
+button {
+    background: #4a90e2;
+    color: #ffffff;
+    border: none;
+    padding: 0 25px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background: #357abd;
+}
+
+button:active {
+    transform: scale(0.98);
+}
